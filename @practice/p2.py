@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from langchain.prompts import ChatPromptTemplate
-from langchain.schema.runnable import RunnableBranch
+from langchain.schema.runnable import RunnableBranch, RunnableLambda
 from langchain_community.llms.ollama import Ollama
 from langchain.schema.output_parser import StrOutputParser
 
@@ -60,7 +60,13 @@ branches = RunnableBranch(
     escalate_feedback_template | model | StrOutputParser()
 )
 
-classification_chain = classification_template | model | StrOutputParser()
+def print_and_pass(x):
+    print('print_and_pass::', x, "\n")  # Print the outputX
+    return x
+
+classification_result_log = RunnableLambda(lambda x: print_and_pass(x))
+
+classification_chain = classification_template | model | StrOutputParser() | classification_result_log
 
 chain = classification_chain | branches
 
@@ -71,6 +77,6 @@ chain = classification_chain | branches
 # Default - "I'm not sure about the product yet. Can you tell me more about its features and benefits?"
 
 
-result = chain.invoke({'feedback': "I'm not sure about the product yet. Can you tell me more about its features and benefits?"})
+result = chain.invoke({'feedback': "The product is okay. It works as expected but nothing exceptional."})
 
 print(result)
