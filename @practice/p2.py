@@ -1,8 +1,8 @@
 from dotenv import load_dotenv
 from langchain.prompts import ChatPromptTemplate
+from langchain.schema.output_parser import StrOutputParser
 from langchain.schema.runnable import RunnableBranch, RunnableLambda
 from langchain_community.llms.ollama import Ollama
-from langchain.schema.output_parser import StrOutputParser
 
 load_dotenv()
 
